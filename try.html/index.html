@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manyu Simha Ravi — Offensive Security</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --cream: #f5f0e8;
+  --cream-dark: #ede7d9;
+  --cream-mid: #e8e0cf;
+  --green: #2d4a3e;
+  --green-mid: #3d6455;
+  --green-light: #4e7d68;
+  --green-pale: #d4e6de;
+  --green-wash: #eaf2ee;
+  --ink: #1a1f1c;
+  --ink-mid: #3d4740;
+  --ink-light: #6b7570;
+  --ink-faint: #9ba8a2;
+  --border: rgba(45,74,62,0.12);
+  --border-mid: rgba(45,74,62,0.2);
+  --ff-display: 'Playfair Display', Georgia, serif;
+  --ff-body: 'DM Sans', system-ui, sans-serif;
+  --ff-mono: 'DM Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--ff-body);
+  font-size: 15px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--green); text-decoration: none; }
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(245,240,232,0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 3rem;
+}
+
+.nav-name {
+  font-family: var(--ff-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--green);
+  letter-spacing: 0.04em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink-light);
+  letter-spacing: 0.02em;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--green); }
+
+/* ── LAYOUT ── */
+main { padding-top: 54px; }
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 3rem;
+}
+
+section { padding: 88px 0; }
+
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 100px 0 88px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg-shape {
+  position: absolute;
+  top: -60px;
+  right: -120px;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(78,125,104,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green-light);
+  margin-bottom: 1.75rem;
+}
+
+.hero-eyebrow::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--green-light);
+}
+
+.hero h1 {
+  font-family: var(--ff-display);
+  font-size: clamp(2.6rem, 5.5vw, 4.2rem);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 1.5rem;
+  max-width: 680px;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--green);
+}
+
+.hero-sub {
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--ink-mid);
+  max-width: 500px;
+  line-height: 1.75;
+  margin-bottom: 2.5rem;
+}
+
+.hero-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--green);
+  color: #fff;
+  font-family: var(--ff-body);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 22px;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
+  transition: background 0.2s;
+}
+
+.btn-main:hover { background: var(--green-mid); color: #fff; }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: var(--ink-mid);
+  font-family: var(--ff-body);
+  font-size: 13px;
+  font-weight: 400;
+  padding: 10px 18px;
+  border-radius: 4px;
+  border: 1px solid var(--border-mid);
+  transition: all 0.2s;
+}
+
+.btn-ghost:hover { border-color: var(--green); color: var(--green); background: var(--green-wash); }
+
+/* ── SECTION HEADERS ── */
+.s-label {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--green-light);
+  margin-bottom: 0.4rem;
+}
+
+.s-title {
+  font-family: var(--ff-display);
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 2.5rem;
+  letter-spacing: -0.01em;
+}
+
+/* ── ABOUT STRIP ── */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.about-text p {
+  font-size: 15px;
+  color: var(--ink-mid);
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+
+.about-text p:last-child { margin-bottom: 0; }
+
+.about-tools {
+  background: var(--green-wash);
+  border: 1px solid var(--green-pale);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.about-tools-title {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--green-light);
+  margin-bottom: 1rem;
+}
+
+.tool-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tool-tag {
+  font-family: var(--ff-mono);
+  font-size: 12px;
+  padding: 4px 10px;
+  background: #fff;
+  border: 1px solid var(--border-mid);
+  border-radius: 3px;
+  color: var(--ink-mid);
+}
+
+/* ── LAB WORK ── */
+.lab-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.lab-item {
+  background: #fff;
+  padding: 1.5rem 1.75rem;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+
+.lab-item:last-child { border-bottom: none; }
+.lab-item:hover { background: var(--green-wash); }
+
+.lab-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.lab-role {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.lab-date {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  padding-top: 2px;
+  white-space: nowrap;
+}
+
+.lab-org {
+  font-size: 13px;
+  color: var(--green-light);
+  margin-bottom: 0.75rem;
+}
+
+.lab-bullets {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.lab-bullets li {
+  font-size: 14px;
+  color: var(--ink-mid);
+  padding-left: 1.1rem;
+  position: relative;
+  line-height: 1.6;
+}
+
+.lab-bullets li::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: var(--green-light);
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+/* ── WRITEUPS ── */
+#writeups-list {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.writeup-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+  text-decoration: none;
+  color: inherit;
+}
+
+.writeup-item:last-child { border-bottom: none; }
+.writeup-item:hover { background: var(--green-wash); }
+
+.writeup-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.writeup-meta {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  margin-top: 2px;
+}
+
+.writeup-arrow {
+  font-family: var(--ff-mono);
+  font-size: 12px;
+  color: var(--green-light);
+  flex-shrink: 0;
+}
+
+.writeup-loading {
+  padding: 1.5rem;
+  font-family: var(--ff-mono);
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+
+/* ── PROJECTS ── */
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.project-item {
+  background: #fff;
+  padding: 1.5rem 1.75rem;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: start;
+  transition: background 0.15s;
+}
+
+.project-item:last-child { border-bottom: none; }
+.project-item:hover { background: var(--green-wash); }
+
+.project-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 0.3rem;
+}
+
+.project-desc {
+  font-size: 13px;
+  color: var(--ink-mid);
+  line-height: 1.65;
+  margin-bottom: 0.75rem;
+}
+
+.project-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.stack-tag {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  padding: 3px 8px;
+  background: var(--cream-dark);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--ink-light);
+}
+
+.project-badge {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  padding: 3px 9px;
+  border-radius: 3px;
+  white-space: nowrap;
+  background: var(--green-pale);
+  color: var(--green);
+  border: 1px solid rgba(45,74,62,0.2);
+}
+
+/* ── PLATFORMS ── */
+.platforms-list {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.platform-row {
+  display: grid;
+  grid-template-columns: 160px 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+
+.platform-row:last-child { border-bottom: none; }
+.platform-row:hover { background: var(--green-wash); }
+
+.platform-name {
+  font-family: var(--ff-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.platform-detail {
+  font-size: 13px;
+  color: var(--ink-light);
+}
+
+.badge {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  padding: 3px 9px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.badge-green { background: var(--green-pale); color: var(--green); border: 1px solid rgba(45,74,62,0.2); }
+.badge-neutral { background: var(--cream-dark); color: var(--ink-light); border: 1px solid var(--border-mid); }
+.badge-amber { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+
+/* ── CURRENTLY BUILDING ── */
+.building-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 2.5rem;
+}
+
+.building-item {
+  background: var(--green-wash);
+  border: 1px solid var(--green-pale);
+  border-left: 3px solid var(--green-light);
+  border-radius: 0 6px 6px 0;
+  padding: 1rem 1.25rem;
+}
+
+.building-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 3px;
+}
+
+.building-desc {
+  font-size: 13px;
+  color: var(--ink-light);
+  line-height: 1.6;
+}
+
+/* ── CONTACT ── */
+.contact-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+
+.contact-text {
+  font-size: 15px;
+  color: var(--ink-mid);
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.contact-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contact-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--ink-mid);
+  transition: color 0.2s;
+}
+
+.contact-link:hover { color: var(--green); }
+
+.contact-link-label {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  width: 60px;
+  flex-shrink: 0;
+}
+
+.contact-avail {
+  background: var(--green-wash);
+  border: 1px solid var(--green-pale);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.avail-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green-light);
+  margin-right: 6px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.avail-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+}
+
+.avail-desc {
+  font-size: 13px;
+  color: var(--ink-light);
+  line-height: 1.65;
+}
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+footer p {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  nav { padding: 0 1.5rem; }
+  .nav-links { display: none; }
+  .container { padding: 0 1.5rem; }
+  .hero h1 { font-size: 2.4rem; }
+  .about-grid { grid-template-columns: 1fr; }
+  .contact-wrap { grid-template-columns: 1fr; gap: 2rem; }
+  .platform-row { grid-template-columns: 1fr auto; }
+  .platform-detail { display: none; }
+  footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-name">0xManyu</span>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#lab">Lab Work</a></li>
+    <li><a href="#writeups">Write-ups</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg-shape"></div>
+    <div class="container">
+      <p class="hero-eyebrow">Bengaluru, India · Offensive Security</p>
+      <h1>Manyu Simha Ravi.<br><em>Learning how systems work,<br>one vulnerability at a time.</em></h1>
+      <p class="hero-sub">
+        CS & Cyber Security undergraduate. I spend my time breaking things in
+        controlled labs, documenting what I find, and building tools that make
+        the process sharper.
+      </p>
+      <div class="hero-links">
+        <a href="mailto:manyusimha26@gmail.com" class="btn-main">Get in touch</a>
+        <a href="https://github.com/manyu2024" target="_blank" class="btn-ghost">GitHub</a>
+        <a href="https://linkedin.com/in/manyu-simha-ravi-543742327" target="_blank" class="btn-ghost">LinkedIn</a>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="container">
+      <p class="s-label">About</p>
+      <h2 class="s-title">Who I am</h2>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>
+            Third-year undergraduate at Dayananda Sagar College of Engineering,
+            specialising in Computer Science and Cyber Security. My focus is
+            entirely offensive — understanding how attacks work so I can
+            eventually help prevent them.
+          </p>
+          <p>
+            I practice on HackTheBox, TryHackMe, and PortSwigger Academy
+            consistently, run a home lab for hands-on exploitation, and document
+            everything I learn. Currently ranked top 20% globally on TryHackMe.
+          </p>
+          <p>
+            Seeking an offensive security or penetration testing internship
+            where I can contribute from day one.
+          </p>
+        </div>
+        <div class="about-tools">
+          <p class="about-tools-title">Tools I work with</p>
+          <div class="tool-tags">
+            <span class="tool-tag">Burp Suite</span>
+            <span class="tool-tag">Nmap</span>
+            <span class="tool-tag">Metasploit</span>
+            <span class="tool-tag">Wireshark</span>
+            <span class="tool-tag">sqlmap</span>
+            <span class="tool-tag">Hydra</span>
+            <span class="tool-tag">Hashcat</span>
+            <span class="tool-tag">Gobuster</span>
+            <span class="tool-tag">Ettercap</span>
+            <span class="tool-tag">Netcat</span>
+            <span class="tool-tag">John the Ripper</span>
+            <span class="tool-tag">Amass</span>
+            <span class="tool-tag">Python</span>
+            <span class="tool-tag">Bash</span>
+            <span class="tool-tag">Kali Linux</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- LAB WORK -->
+  <section id="lab">
+    <div class="container">
+      <p class="s-label">Lab Work</p>
+      <h2 class="s-title">What I have actually done</h2>
+      <div class="lab-list">
+
+        <div class="lab-item">
+          <div class="lab-item-header">
+            <span class="lab-role">Offensive Security Practitioner — Self-Directed Home Lab</span>
+            <span class="lab-date">Sep 2025 – Present</span>
+          </div>
+          <p class="lab-org">Kali Linux · Metasploitable · VirtualBox</p>
+          <ul class="lab-bullets">
+            <li>Exploited VSFTPD, UnrealIRCd, and Samba to obtain remote shell access; performed post-exploitation enumeration and privilege escalation via Meterpreter.</li>
+            <li>Executed ARP poisoning and MITM attacks using Ettercap and Wireshark; intercepted plaintext credentials over unencrypted protocols.</li>
+            <li>Performed DNS zone transfer attacks against intentionally misconfigured BIND servers to demonstrate information disclosure risks.</li>
+            <li>Simulated stack-based buffer overflow attacks to understand memory corruption and exploit development fundamentals.</li>
+            <li>Identified exposed IPP endpoint on a networked printer — achieved unauthorised remote print job submission with zero authentication via direct IP access.</li>
+            <li>Documented all assessments: methodology, exploitation steps, risk rating, and remediation recommendations.</li>
+          </ul>
+        </div>
+
+        <div class="lab-item">
+          <div class="lab-item-header">
+            <span class="lab-role">Cultural Lead — DSCE Cyber Security Club (Aegis)</span>
+            <span class="lab-date">Jan 2025 – Present</span>
+          </div>
+          <p class="lab-org">Dayananda Sagar College of Engineering</p>
+          <ul class="lab-bullets">
+            <li>Led 12-member team organising SANDBOX, a national-level cybersecurity hackathon.</li>
+            <li>Coordinated inter-departmental technical and cultural events as Cultural Head.</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- WRITEUPS -->
+  <section id="writeups">
+    <div class="container">
+      <p class="s-label">Write-ups</p>
+      <h2 class="s-title">Documented exploits & findings</h2>
+      <div id="writeups-list">
+        <p class="writeup-loading">Fetching write-ups...</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="container">
+      <p class="s-label">Projects</p>
+      <h2 class="s-title">Things I have built</h2>
+      <div class="projects-list">
+
+        <div class="project-item">
+          <div>
+            <p class="project-name">FINN — Terminal Security Assistant</p>
+            <p class="project-desc">
+              600-line Python tool that supports penetration testing workflows from the command line.
+              Integrates Llama 3.3 70B via Groq API with live CVE lookups, persistent session memory,
+              and uncertainty-triggered web search so guidance stays current during active assessments.
+            </p>
+            <div class="project-stack">
+              <span class="stack-tag">Python</span>
+              <span class="stack-tag">Groq API</span>
+              <span class="stack-tag">Llama 3.3 70B</span>
+              <span class="stack-tag">Rich</span>
+            </div>
+          </div>
+          <span class="project-badge">Active</span>
+        </div>
+
+        <div class="project-item">
+          <div>
+            <p class="project-name">Penetration Testing Lab Environment</p>
+            <p class="project-desc">
+              Isolated virtual lab with Kali Linux and Metasploitable for hands-on exploitation practice.
+              Full recon-to-root workflow on every target: enumeration, exploitation, post-exploitation,
+              and a written assessment report for each completed engagement.
+            </p>
+            <div class="project-stack">
+              <span class="stack-tag">Kali Linux</span>
+              <span class="stack-tag">Metasploitable</span>
+              <span class="stack-tag">Metasploit</span>
+              <span class="stack-tag">VirtualBox</span>
+            </div>
+          </div>
+          <span class="project-badge">Active</span>
+        </div>
+
+      </div>
+
+      <div class="building-list">
+        <p class="s-label" style="margin-bottom:0.6rem;">Currently Building</p>
+        <div class="building-item">
+          <p class="building-name">Home Network Attack Surface Assessment</p>
+          <p class="building-desc">Full pentest methodology on home network — subnet discovery, service fingerprinting, exploitation — documented as a client-ready report. The IPP printer finding is Section 3.</p>
+        </div>
+        <div class="building-item">
+          <p class="building-name">Python Recon Automation Script</p>
+          <p class="building-desc">Chains Nmap output → service fingerprinting → CVE lookup into a single automated recon pipeline.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- PLATFORMS -->
+  <section id="platforms">
+    <div class="container">
+      <p class="s-label">Practice Platforms</p>
+      <h2 class="s-title">Where I train</h2>
+      <div class="platforms-list">
+        <div class="platform-row">
+          <span class="platform-name">HackTheBox</span>
+          <span class="platform-detail">12+ machines — enumeration, web exploitation, privilege escalation</span>
+          <span class="badge badge-green">Active</span>
+        </div>
+        <div class="platform-row">
+          <span class="platform-name">TryHackMe</span>
+          <span class="platform-detail">Offensive security paths — top 20% globally</span>
+          <span class="badge badge-green">Active</span>
+        </div>
+        <div class="platform-row">
+          <span class="platform-name">PortSwigger</span>
+          <span class="platform-detail">SQLi, XSS, CSRF, IDOR, SSRF labs — ongoing</span>
+          <span class="badge badge-green">Active</span>
+        </div>
+        <div class="platform-row">
+          <span class="platform-name">OverTheWire</span>
+          <span class="platform-detail">Bandit levels 0–10 — Linux CLI, permissions, SSH</span>
+          <span class="badge badge-neutral">Done</span>
+        </div>
+        <div class="platform-row">
+          <span class="platform-name">DVWA</span>
+          <span class="platform-detail">All modules — SQLi, XSS, CSRF, Command Injection, File Upload</span>
+          <span class="badge badge-neutral">Done</span>
+        </div>
+        <div class="platform-row">
+          <span class="platform-name">CTF Competitions</span>
+          <span class="platform-detail">5 competed — web, crypto, OSINT, forensics, binary exploitation</span>
+          <span class="badge badge-green">Ongoing</span>
+        </div>
+        <div class="platform-row">
+          <span class="platform-name">ISC2 CC</span>
+          <span class="platform-detail">Certified in Cybersecurity — in progress</span>
+          <span class="badge badge-amber">In Progress</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="container">
+      <p class="s-label">Contact</p>
+      <h2 class="s-title">Let's talk</h2>
+      <div class="contact-wrap">
+        <div>
+          <p class="contact-text">
+            I am actively seeking an offensive security or penetration testing
+            internship. If you're hiring or want to talk security, reach out
+            directly.
+          </p>
+          <div class="contact-links">
+            <a href="mailto:manyusimha26@gmail.com" class="contact-link">
+              <span class="contact-link-label">Email</span>
+              manyusimha26@gmail.com
+            </a>
+            <a href="https://github.com/manyu2024" target="_blank" class="contact-link">
+              <span class="contact-link-label">GitHub</span>
+              github.com/manyu2024
+            </a>
+            <a href="https://linkedin.com/in/manyu-simha-ravi-543742327" target="_blank" class="contact-link">
+              <span class="contact-link-label">LinkedIn</span>
+              manyu-simha-ravi
+            </a>
+          </div>
+        </div>
+        <div class="contact-avail">
+          <p class="avail-title"><span class="avail-dot"></span>Available for internships</p>
+          <p class="avail-desc">
+            Based in Bengaluru. Open to in-person, remote, or hybrid roles.
+            Can start immediately.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Manyu Simha Ravi · Bengaluru, India</p>
+  <p>manyusimha26@gmail.com</p>
+</footer>
+
+<script>
+async function loadWriteups() {
+  const list = document.getElementById('writeups-list');
+  try {
+    const res = await fetch('https://api.github.com/repos/manyu2024/manyu2024.github.io/contents/writeups');
+    const files = await res.json();
+    const mds = files.filter(f => f.name.endsWith('.md'));
+    if (!mds.length) {
+      list.innerHTML = '<p class="writeup-loading">No write-ups yet — first one coming soon.</p>';
+      return;
+    }
+    list.innerHTML = mds.map(f => {
+      const title = f.name.replace('.md','').replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+      const url = `https://github.com/manyu2024/manyu2024.github.io/blob/main/writeups/${f.name}`;
+      return `<a href="${url}" target="_blank" class="writeup-item">
+        <div>
+          <p class="writeup-title">${title}</p>
+          <p class="writeup-meta">${f.name}</p>
+        </div>
+        <span class="writeup-arrow">View →</span>
+      </a>`;
+    }).join('');
+  } catch(e) {
+    list.innerHTML = '<p class="writeup-loading">Could not load write-ups.</p>';
+  }
+}
+loadWriteups();
+</script>
+
+</body>
+</html>
