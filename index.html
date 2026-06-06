@@ -784,6 +784,20 @@
   </section>
 
   <hr class="divider">
+  <!-- WRITEUPS -->
+  <section id="writeups">
+    <div class="container">
+      <p class="section-label">Write-ups</p>
+      <h2 class="section-title">Documented exploits & findings</h2>
+      <div id="writeups-grid" style="display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+        <div style="background:var(--bg-surface);padding:1.25rem 1.5rem;color:var(--text-muted);font-family:var(--font-mono);font-size:13px;">
+          Loading write-ups...
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
 
   <!-- PLATFORMS -->
   <section id="platforms">
@@ -893,6 +907,42 @@
     <p>Manyu Simha Ravi · Bengaluru, India · manyusimha26@gmail.com</p>
   </div>
 </footer>
+<script>
+  async function loadWriteups() {
+    const grid = document.getElementById('writeups-grid');
+    try {
+      const res = await fetch('https://api.github.com/repos/manyu2024/manyu2024.github.io/contents/writeups');
+      const files = await res.json();
+      const mds = files.filter(f => f.name.endsWith('.md'));
+
+      if (mds.length === 0) {
+        grid.innerHTML = '<div style="background:var(--bg-surface);padding:1.25rem 1.5rem;color:var(--text-muted);font-family:var(--font-mono);font-size:13px;">No write-ups yet.</div>';
+        return;
+      }
+
+      grid.innerHTML = mds.map(f => {
+        const title = f.name
+          .replace('.md', '')
+          .replace(/-/g, ' ')
+          .replace(/\b\w/g, c => c.toUpperCase());
+        const url = `https://github.com/manyu2024/manyu2024.github.io/blob/main/writeups/${f.name}`;
+        return `
+          <a href="${url}" target="_blank" style="background:var(--bg-surface);padding:1.25rem 1.5rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='var(--bg-surface)'">
+            <div>
+              <p style="font-size:14px;font-weight:500;color:var(--text-primary);margin-bottom:4px;">${title}</p>
+              <p style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">${f.name}</p>
+            </div>
+            <span style="font-family:var(--font-mono);font-size:11px;color:var(--accent);white-space:nowrap;">View →</span>
+          </a>`;
+      }).join('');
+
+    } catch(e) {
+      grid.innerHTML = '<div style="background:var(--bg-surface);padding:1.25rem 1.5rem;color:var(--text-muted);font-size:13px;">Could not load write-ups.</div>';
+    }
+  }
+
+  loadWriteups();
+</script>
 
 </body>
 </html>
